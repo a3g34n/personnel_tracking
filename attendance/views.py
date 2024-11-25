@@ -9,6 +9,7 @@ from datetime import datetime
 from notifications.models import Notification
 from django.contrib.auth import get_user_model
 from personnel.models import User
+from notifications.tasks import send_notification
 
 User = get_user_model()
 
@@ -33,11 +34,15 @@ class CheckinView(APIView):
             user.leave_entitlement -= late_days
             user.save()
             
-            Notification.objects.create(
-                user=User.objects.filter(role='admin').first(),  # İlk yetkiliyi seçiyoruz
-                message=f"{user.username} has checked in late at {attendance.checkin_time}."
-            )
-
+            # Notification.objects.create(
+            #     user=User.objects.filter(role='admin').first(),  # İlk yetkiliyi seçiyoruz
+            #     message=f"{user.username} has checked in late at {attendance.checkin_time}."
+            # )
+            # Bildirimi Celery ile gönder
+            admin_user = User.objects.filter(role='admin').first()
+            if admin_user:
+                send_notification.delay(admin_user.id, f"{user.username} has checked in late at {attendance.checkin_time}.")
+                
         return Response({"message": "Check-in successful!"}, status=status.HTTP_200_OK)
 
 class CheckoutView(APIView):

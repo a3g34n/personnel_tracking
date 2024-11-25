@@ -11,7 +11,7 @@ from django.contrib import messages
 from datetime import datetime, timedelta
 from django.db.models import Sum, F, ExpressionWrapper, DurationField
 from notifications.models import Notification
-
+from notifications.tasks import send_notification
 
 User = get_user_model()  # User modeline erişim sağlar
 
@@ -130,10 +130,14 @@ def approve_leave_request(request, pk):
     employee = leave.user  # İzin isteyen çalışan
     remaining_days = employee.remaining_leave_days()  # Kalan izin günlerini hesapla
     if remaining_days < 3:
-        Notification.objects.create(
-            user=User.objects.filter(role='admin').first(),  # İlk yetkiliyi seçiyoruz
-            message=f"{leave.user.username} has less than 3 leave days remaining."
-        )
+        # Bildirimi Celery ile gönder
+        admin_user = User.objects.filter(role='admin').first()
+        if admin_user:
+            send_notification.delay(admin_user.id, f"{leave.user.username} has less than 3 leave days remaining.")        
+        # Notification.objects.create(
+        #     user=User.objects.filter(role='admin').first(),  # İlk yetkiliyi seçiyoruz
+        #     message=f"{leave.user.username} has less than 3 leave days remaining."
+        # )
     messages.success(request, f"Leave request from {leave.start_date} to {leave.end_date} has been approved.")
     return redirect('admin-leave-requests')
 def reject_leave_request(request, pk):
@@ -173,10 +177,14 @@ def create_leave(request):
             # Kalan izin günlerini kontrol et
             remaining_days = employee.remaining_leave_days()
             if remaining_days < 3:
-                Notification.objects.create(
-                    user=User.objects.filter(role='admin').first(),  # İlk yetkiliyi seçiyoruz
-                    message=f"{leave.user.username} has less than 3 leave days remaining."
-                )
+                # Bildirimi Celery ile gönder
+                admin_user = User.objects.filter(role='admin').first()
+                if admin_user:
+                    send_notification.delay(admin_user.id, f"{leave.user.username} has less than 3 leave days remaining.")        
+                # Notification.objects.create(
+                #     user=User.objects.filter(role='admin').first(),  # İlk yetkiliyi seçiyoruz
+                #     message=f"{leave.user.username} has less than 3 leave days remaining."
+                # )
             messages.success(request, f"Leave created for {employee.username}.")
             return redirect('admin-leave-requests')
         else:
