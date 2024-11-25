@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Detail</title>
+</head>
+<body>
+    <h1>Employee Detail</h1>
+
+    <h2>General Information</h2>
+    <p><strong>Name:</strong> {{ employee.username }}</p>
+    <p><strong>Email:</strong> {{ employee.email }}</p>
+    <p><strong>Date of Birth:</strong> {{ employee.date_of_birth|date:"d M Y"|default:"Not provided" }}</p>
+    <p><strong>Number:</strong> {{ employee.phone_number }}</p>
+    <p><strong>Date Joined:</strong> {{ employee.date_joined|date:"d M Y" }}</p>
+    <p><strong>Remaining Leave Days:</strong> {{ remaining_days }}</p>
+
+    <h2>Today's Attendance</h2>
+    {% if today_attendance %}
+        <p><strong>Check-in Time:</strong> {{ today_attendance.checkin_time|default:"Not Checked In" }}</p>
+        <p><strong>Check-out Time:</strong> {{ today_attendance.checkout_time|default:"Not Checked Out" }}</p>
+    {% else %}
+        <p>No attendance record for today.</p>
+    {% endif %}
+
+    <h2>Past Attendance Records</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Check-in Time</th>
+                <th>Check-out Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attendance in past_attendances %}
+            <tr>
+                <td>{{ attendance.date }}</td>
+                <td>{{ attendance.checkin_time|default:"Not Checked In" }}</td>
+                <td>{{ attendance.checkout_time|default:"Not Checked Out" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No past attendance records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Leave Requests</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leave_requests %}
+            <tr>
+                <td>{{ leave.start_date|date:"d M Y" }}</td>
+                <td>{{ leave.end_date|date:"d M Y" }}</td>
+                <td>{{ leave.status }}</td>
+                <td>{{ leave.reason|default:"No reason provided" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No leave requests found for this employee.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

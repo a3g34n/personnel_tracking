@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leave Request Form</title>
+</head>
+<body>
+    <h1>Request Leave</h1>
+    <p><strong>Remaining Leave Days:</strong> {{ remaining_days|floatformat:2 }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        <br><br>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        <br><br>
+
+        <label for="reason">Reason:</label>
+        <textarea id="reason" name="reason" placeholder="Optional"></textarea>
+        <br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+    <br>
+    <a href="{% url 'leave-summary' %}">Back to Leave Summary</a>
+</body>
+</html>

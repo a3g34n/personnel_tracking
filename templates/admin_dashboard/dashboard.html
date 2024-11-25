@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <h2>Notifications</h2>
+    <ul>
+        {% for notification in notifications %}
+            <li>
+                {{ notification.message }} - <small>{{ notification.created_at|date:"d M Y H:i" }}</small>
+                {% if not notification.is_read %}
+                    <a href="{% url 'mark-notification-as-read' notification.id %}">Mark as Read</a>
+                {% else %}
+                    <span style="color: green;">Read</span>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No notifications found.</li>
+        {% endfor %}
+    </ul>
+    <h2>Employee Management</h2>
+    <ul>
+        <li><a href="{% url 'admin-employee-list' %}">View Employee List</a></li>
+        <li><a href="{% url 'admin-leave-requests' %}">View Leave Requests</a></li>
+        <li><a href="{% url 'admin-reports' %}">View Reports</a></li>
+        <li><a href="{% url 'detailed-work-report' %}">Monhly Work Reports</a></li>
+        <a href="{% url 'logout' %}">Logout</a>
+    </ul>
+    <h2>Late Employees for Today</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Check-in Time</th>
+                <th>Late Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in late_employees %}
+            <tr>
+                <td>{{ employee.username }}</td>
+                <td>{{ employee.checkin_time }}</td>
+                <td>{{ employee.late_duration_hours }} hour(s) {{ employee.late_duration_minutes }} minute(s)</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No late employees today.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

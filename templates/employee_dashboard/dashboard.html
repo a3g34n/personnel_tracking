@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Dashboard</title>
+</head>
+<body>
+    <h1>Employee Dashboard</h1>
+    <h2>Welcome, {{ user.username }}</h2>
+    <ul>
+        <li><a href="{% url 'employee-attendance' %}">View Attendance</a></li>
+        <li><a href="{% url 'leave-summary' %}">Request Leave</a></li>
+        <li><a href="{% url 'employee-profile' %}">View Profile</a></li>
+        <a href="{% url 'logout' %}">Logout</a>
+    </ul>
+</body>
+</html>

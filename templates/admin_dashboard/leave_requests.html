@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leave Requests</title>
+</head>
+<body>
+    <h1>Leave Requests</h1>
+    <!-- Yeni İzin Oluştur Butonu -->
+    <a href="{% url 'create-leave' %}" style="display: inline-block; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 15px;">
+        Create New Leave
+    </a>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leave_requests %}
+            <tr>
+                <td>{{ leave.user.username }}</td>
+                <td>{{ leave.start_date }}</td>
+                <td>{{ leave.end_date }}</td>
+                <td>{{ leave.reason|default:"No reason provided" }}</td>
+                <td>
+                    <a href="{% url 'approve-leave-request' leave.id %}">Approve</a> |
+                    <a href="{% url 'reject-leave-request' leave.id %}">Reject</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No pending leave requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Bytecode dosyaları
+__pycache__/
+*.py[cod]
+
+# Virtualenv
+env/
+venv/
+
+# PyCharm/VSCode gibi IDE ayarları
+.idea/
+.vscode/
+
+# Django statik dosyaları
+/staticfiles/
+*.log
+
+# Veritabanı
+db.sqlite3
+
+# Docker
+*.env
+*.log
+*.pid
+postgres_data/

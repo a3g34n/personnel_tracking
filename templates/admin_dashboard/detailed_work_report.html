@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Detailed Work Report</title>
+</head>
+<body>
+    <h1>Detailed Work Report</h1>
+
+    <form method="get">
+        <label for="month">Select Month:</label>
+        <input type="month" id="month" name="month" value="{{ month }}">
+        <button type="submit">Filter</button>
+    </form>
+
+    {% for username, work_data in grouped_work_data.items %}
+    <h2>{{ username }}</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Work Duration (HH:MM:SS)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in work_data %}
+            <tr>
+                <td>{{ data.date }}</td>
+                <td>{{ data.work_duration }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No work data found for this month.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}
+</body>
+</html>
