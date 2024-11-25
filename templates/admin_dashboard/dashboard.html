@@ -3,11 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
+    <script>
+        // WebSocket bağlantısını başlat
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/notifications/');
+
+        // Mesaj alındığında çağrılacak fonksiyon
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            const notificationList = document.getElementById('notification-list');
+            const newNotification = document.createElement('li');
+            newNotification.innerHTML = `
+                ${data.message} - <small>${new Date().toLocaleString()}</small>
+                <span style="color: red;">New</span>
+            `;
+            notificationList.prepend(newNotification); // Yeni bildirimi listenin en üstüne ekler
+        };
+
+        // Hata olduğunda bilgi ver
+        socket.onerror = function(error) {
+            console.error("WebSocket Error: ", error);
+        };
+
+        // Bağlantı kapandığında bilgi ver
+        socket.onclose = function() {
+            console.warn("WebSocket connection closed");
+        };
+    </script>
 </head>
 <body>
     <h1>Admin Dashboard</h1>
     <h2>Notifications</h2>
-    <ul>
+    <ul id="notification-list">
         {% for notification in notifications %}
             <li>
                 {{ notification.message }} - <small>{{ notification.created_at|date:"d M Y H:i" }}</small>

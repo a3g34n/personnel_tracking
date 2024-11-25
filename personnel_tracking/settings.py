@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-k!b!y^*om#_l1nwxyo0275m@w8v1qexfdhe84yokp7pf+%lvn*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'web', 'web-1']
 
 
 # Application definition
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'admin_dashboard',
     'employee_dashboard',
     'django_extensions',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +78,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'personnel_tracking.wsgi.application'
+ASGI_APPLICATION = 'personnel_tracking.asgi.application'
 
+# Channels için Redis ayarı
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],  # Redis servisi Docker Compose içinde tanımlandı
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
