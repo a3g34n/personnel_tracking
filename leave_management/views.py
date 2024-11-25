@@ -10,10 +10,40 @@ from personnel.models import User  # Kullanıcı modeli
 from notifications.models import Notification
 from personnel.models import User
 from django.contrib.auth import get_user_model
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 User = get_user_model()
 
 class LeaveRequestView(APIView):
+    @swagger_auto_schema(
+        operation_description="Create a new leave request for an employee.",
+        request_body=LeaveSerializer,
+        responses={
+            201: openapi.Response(
+                description="Leave request created successfully.",
+                examples={
+                    "application/json": {
+                        "id": 1,
+                        "user": 2,
+                        "start_date": "2024-12-01",
+                        "end_date": "2024-12-05",
+                        "reason": "Family vacation",
+                        "status": "pending",
+                        "created_at": "2024-11-25T10:30:00Z"
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Invalid data",
+                examples={
+                    "application/json": {
+                        "start_date": ["This field is required."]
+                    }
+                }
+            )
+        }
+    )
     @method_decorator(login_required)
     def post(self, request):
         serializer = LeaveSerializer(data=request.data)
@@ -31,6 +61,27 @@ class LeaveRequestView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LeaveListView(APIView):
+    @swagger_auto_schema(
+        operation_description="List all leave requests for the current user.",
+        responses={
+            200: openapi.Response(
+                description="A list of leave requests.",
+                examples={
+                    "application/json": [
+                        {
+                            "id": 1,
+                            "user": 2,
+                            "start_date": "2024-12-01",
+                            "end_date": "2024-12-05",
+                            "reason": "Family vacation",
+                            "status": "pending",
+                            "created_at": "2024-11-25T10:30:00Z"
+                        }
+                    ]
+                }
+            )
+        }
+    )
     @method_decorator(login_required)
     def get(self, request):
         leaves = Leave.objects.filter(user=request.user)

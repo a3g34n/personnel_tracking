@@ -6,6 +6,8 @@ __pycache__/
 env/
 venv/
 
+.env
+
 # PyCharm/VSCode gibi IDE ayarları
 .idea/
 .vscode/

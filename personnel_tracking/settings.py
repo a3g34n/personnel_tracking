@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+# .env dosyasını yükle
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k!b!y^*om#_l1nwxyo0275m@w8v1qexfdhe84yokp7pf+%lvn*'
-
+SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key_for_local_dev')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'web', 'web-1']
 
@@ -47,6 +51,7 @@ INSTALLED_APPS = [
     'employee_dashboard',
     'django_extensions',
     'channels',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -78,17 +83,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'personnel_tracking.wsgi.application'
-ASGI_APPLICATION = 'personnel_tracking.asgi.application'
+ASGI_APPLICATION = 'personnel_tracker.asgi.application'
 
 # Channels için Redis ayarı
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis", 6379)],  # Redis servisi Docker Compose içinde tanımlandı
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [("redis", 6379)],  # Docker içinde Redis servisi
         },
     },
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -96,11 +102,11 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydatabase',  # docker-compose.yml'deki POSTGRES_DB ile aynı
-        'USER': 'myuser',      # docker-compose.yml'deki POSTGRES_USER ile aynı
-        'PASSWORD': 'mypassword',  # docker-compose.yml'deki POSTGRES_PASSWORD ile aynı
-        'HOST': 'db',          # Docker Compose'daki PostgreSQL servis adı
-        'PORT': 5432,          # PostgreSQL'in varsayılan portu
+        'NAME': os.getenv('DB_NAME', 'mydatabase'),  # docker-compose.yml'deki POSTGRES_DB ile aynı
+        'USER': os.getenv('DB_USER', 'myuser'),      # docker-compose.yml'deki POSTGRES_USER ile aynı
+        'PASSWORD': os.getenv('DB_PASSWORD', 'mypassword'),  # docker-compose.yml'deki POSTGRES_PASSWORD ile aynı
+        'HOST': os.getenv('DB_HOST', 'db'),       # Docker Compose'daki PostgreSQL servis adı
+        'PORT':  os.getenv('DB_PORT', '5432'),          # PostgreSQL'in varsayılan portu
     }
 }
 

@@ -2,6 +2,8 @@ services:
   web:
     build:
       context: .
+    env_file:
+      - .env
     environment:
       - DJANGO_SUPERUSER_USERNAME=admin
       - DJANGO_SUPERUSER_EMAIL=admin@example.com

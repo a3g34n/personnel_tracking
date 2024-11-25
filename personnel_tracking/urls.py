@@ -19,7 +19,27 @@ from django.urls import include, path
 from django.contrib.auth import views as auth_views
 from personnel.views import custom_logout
 
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Personnel Tracking API",
+        default_version='v1',
+        description="API documentation for Personnel Tracking System",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="support@personneltracking.com"),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
 urlpatterns = [
+    # Swagger ve Redoc URL'leri
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
     path('logout/', custom_logout, name='logout'),  
     path('admin/', include('admin_dashboard.urls')),
     path('employee/', include('employee_dashboard.urls')),

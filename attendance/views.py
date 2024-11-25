@@ -1,6 +1,8 @@
 from django.shortcuts import render
 
 # Create your views here.
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,6 +16,27 @@ from notifications.tasks import send_notification
 User = get_user_model()
 
 class CheckinView(APIView):
+    @swagger_auto_schema(
+        operation_description="Log the check-in time for an employee.",
+        responses={
+            200: openapi.Response(
+                description="Check-in successful",
+                examples={
+                    "application/json": {
+                        "message": "Check-in successful!"
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Check-in failed",
+                examples={
+                    "application/json": {
+                        "message": "You have already checked in today."
+                    }
+                }
+            )
+        }
+    )
     def post(self, request):
         user = request.user
         today = datetime.now().date()
@@ -42,7 +65,6 @@ class CheckinView(APIView):
             admin_user = User.objects.filter(role='admin').first()
             if admin_user:
                 send_notification.delay(admin_user.id, f"{user.username} has checked in late at {attendance.checkin_time}.")
-                
         return Response({"message": "Check-in successful!"}, status=status.HTTP_200_OK)
 
 class CheckoutView(APIView):
